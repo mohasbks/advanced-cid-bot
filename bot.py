@@ -58,32 +58,13 @@ class AdvancedCIDBot:
         credentials_json = os.getenv('GOOGLE_CLOUD_CREDENTIALS')
         credentials_path = os.getenv('GOOGLE_CLOUD_CREDENTIALS_PATH', './seismic-octane-471921-n4-1dca51f146a8.json')
         
-        # Try credentials from environment variable first (for Railway deployment)
         if credentials_json:
+            logger.info("✅ Valid Google credentials JSON found in environment variable")
             try:
-                import json
-                import tempfile
-                
-                # Parse JSON to validate it
-                cred_data = json.loads(credentials_json)
-                logger.info("✅ Valid Google credentials JSON found in environment variable")
-                
-                # Create temporary file with credentials
-                temp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
-                temp_file.write(credentials_json)
-                temp_file.flush()
-                temp_file.close()
-                
-                # Initialize Vision API with temp file
-                try:
-                    from services.google_vision_service import GoogleVisionService
-                    self.vision_service = GoogleVisionService(temp_file.name)
-                    logger.info("🚀 Google Vision API initialized successfully from environment variable (Railway)")
-                except Exception as e:
-                    logger.error(f"❌ Failed to initialize Google Vision API from env var: {e}")
-                    # Clean up temp file on failure
-                    if os.path.exists(temp_file.name):
-                        os.remove(temp_file.name)
+                # Initialize Vision API directly with JSON credentials (no temp file needed)
+                from services.google_vision_service import GoogleVisionService
+                self.vision_service = GoogleVisionService(credentials_json=credentials_json)
+                logger.info("🚀 Google Vision API initialized successfully from environment variable (Railway)")
                     
             except json.JSONDecodeError as e:
                 logger.error(f"❌ Invalid JSON format in GOOGLE_CLOUD_CREDENTIALS: {e}")
