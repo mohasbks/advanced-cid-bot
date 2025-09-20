@@ -58,48 +58,57 @@ class AdvancedCIDBot:
         credentials_json = os.getenv('GOOGLE_CLOUD_CREDENTIALS')
         credentials_path = os.getenv('GOOGLE_CLOUD_CREDENTIALS_PATH', './seismic-octane-471921-n4-1dca51f146a8.json')
         
-        # Try credentials from environment variable first
+        # Try credentials from environment variable first (for Railway deployment)
         if credentials_json:
             try:
                 import json
                 import tempfile
-                from services.google_vision_service import GoogleVisionService
                 
                 # Parse JSON to validate it
-                json.loads(credentials_json)
+                cred_data = json.loads(credentials_json)
+                logger.info("✅ Valid Google credentials JSON found in environment variable")
                 
-                # Write JSON to temp file
-                with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-                    f.write(credentials_json)
-                    temp_credentials_path = f.name
+                # Create temporary file with credentials
+                temp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+                temp_file.write(credentials_json)
+                temp_file.flush()
+                temp_file.close()
                 
-                # Ensure file exists and is readable
-                if os.path.exists(temp_credentials_path):
-                    self.vision_service = GoogleVisionService(temp_credentials_path)
-                    logger.info("🚀 Google Vision API initialized from environment variable")
-                else:
-                    logger.error("❌ Failed to create temp credentials file")
+                # Initialize Vision API with temp file
+                try:
+                    from services.google_vision_service import GoogleVisionService
+                    self.vision_service = GoogleVisionService(temp_file.name)
+                    logger.info("🚀 Google Vision API initialized successfully from environment variable (Railway)")
+                except Exception as e:
+                    logger.error(f"❌ Failed to initialize Google Vision API from env var: {e}")
+                    # Clean up temp file on failure
+                    import os
+                    if os.path.exists(temp_file.name):
+                        os.remove(temp_file.name)
                     
             except json.JSONDecodeError as e:
-                logger.error(f"❌ Invalid JSON in GOOGLE_CLOUD_CREDENTIALS: {e}")
+                logger.error(f"❌ Invalid JSON format in GOOGLE_CLOUD_CREDENTIALS: {e}")
+                logger.error(f"JSON content preview: {credentials_json[:100]}...")
             except Exception as e:
-                logger.error(f"❌ Failed to initialize Google Vision from env var: {e}")
+                logger.error(f"❌ Failed to process Google credentials from env var: {e}")
                 logger.error(f"Credentials length: {len(credentials_json) if credentials_json else 0}")
-                if credentials_json:
-                    logger.error(f"Credentials start: {credentials_json[:100]}...")
+        else:
+            logger.warning("❌ GOOGLE_CLOUD_CREDENTIALS environment variable not found")
         
-        # Fallback to file path
-        elif os.path.exists(credentials_path):
+        # Fallback to file path if env var failed or not provided (for local development)
+        if not self.vision_service and os.path.exists(credentials_path):
             try:
                 from services.google_vision_service import GoogleVisionService
                 self.vision_service = GoogleVisionService(credentials_path)
-                logger.info("🚀 Google Vision API initialized from file")
+                logger.info("✅ Google Vision API initialized from local file path")
             except Exception as e:
-                logger.warning(f"Failed to initialize Google Vision from file: {e}")
+                logger.error(f"❌ Failed to initialize Google Vision API from file: {e}")
+        elif not self.vision_service:
+            logger.error(f"❌ Credentials file not found at: {credentials_path}")
         
-        # Check Vision API availability (required)
         if not self.vision_service:
-            logger.error("❌ Google Vision API is required for accurate OCR")
+            logger.error("💥 CRITICAL: Google Vision API not available - Bot will not work properly!")
+            logger.error("🔧 Fix: Set GOOGLE_CLOUD_CREDENTIALS environment variable on Railway with full JSON content")
             logger.error(f"Debug: credentials_json length = {len(credentials_json) if credentials_json else 0}")
             logger.error(f"Debug: credentials_path exists = {os.path.exists(credentials_path)}")
             logger.error(f"Debug: credentials_path = {credentials_path}")
@@ -331,41 +340,6 @@ class AdvancedCIDBot:
                 else:
                     logger.warning(f"❌ Google Vision failed: {vision_result['error']}")
             
-            # Fallback to pytesseract if Google Vision failed or unavailable
-            if not installation_id:
-                logger.info("🔄 Trying pytesseract fallback...")
-                try:
-                    import pytesseract
-                    from PIL import Image
-                    import cv2
-                    import numpy as np
-                    
-                    # Process image with OpenCV for better OCR
-                    img = cv2.imread(photo_path)
-                    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                    
-                    # Apply image processing for better OCR
-                    gray = cv2.medianBlur(gray, 3)
-                    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
-                    
-                    # Extract text using pytesseract
-                    ocr_text = pytesseract.image_to_string(thresh, config='--psm 6 -c tessedit_char_whitelist=0123456789')
-                    
-                    # Extract 63-digit number
-                    import re
-                    numbers = re.findall(r'\d{50,}', ocr_text.replace(' ', '').replace('\n', ''))
-                    
-                    for num in numbers:
-                        if len(num) >= 50:
-                            installation_id = num[:63] if len(num) > 63 else num
-                            logger.info(f"✅ Pytesseract success: extracted {len(installation_id)} digits")
-                            break
-                    
-                    if not installation_id:
-                        logger.warning("❌ Pytesseract: No valid installation ID found")
-                        
-                except Exception as e:
-                    logger.error(f"❌ Pytesseract fallback failed: {e}")
             
             # Clean up temp file
             import os
