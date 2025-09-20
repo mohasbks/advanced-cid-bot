@@ -63,7 +63,6 @@ class AdvancedCIDBot:
             try:
                 import json
                 import tempfile
-                import os
                 from services.google_vision_service import GoogleVisionService
                 
                 # Parse JSON to validate it
