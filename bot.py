@@ -64,10 +64,10 @@ class AdvancedCIDBot:
             except Exception as e:
                 logger.warning(f"Failed to initialize Google Vision: {e}")
         
-        # Check Vision API availability (optional)
+        # Check Vision API availability (required)
         if not self.vision_service:
-            logger.warning("⚠️ Google Vision API not available - Using pytesseract fallback")
-            logger.info("📝 Using pytesseract for OCR processing")
+            logger.error("❌ Google Vision API is required for accurate OCR")
+            raise Exception("Google Vision API is required for this bot")
         else:
             logger.info("✨ Using Google Vision API for OCR")
             
