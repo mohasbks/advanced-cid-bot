@@ -82,7 +82,6 @@ class AdvancedCIDBot:
                 except Exception as e:
                     logger.error(f"❌ Failed to initialize Google Vision API from env var: {e}")
                     # Clean up temp file on failure
-                    import os
                     if os.path.exists(temp_file.name):
                         os.remove(temp_file.name)
                     
@@ -342,7 +341,6 @@ class AdvancedCIDBot:
             
             
             # Clean up temp file
-            import os
             if os.path.exists(photo_path):
                 os.remove(photo_path)
             
