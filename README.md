@@ -5,6 +5,7 @@
 ## ✨ المميزات
 
 ### 🔧 الوظائف الأساسية
+- **High-Accuracy OCR**: Google Cloud Vision API
 - **استخراج Installation ID**: من الصور باستخدام تقنية OCR المتطورة
 - **إنشاء Confirmation ID**: عبر PIDKEY API
 - **نظام الدفع**: USDT TRC20 مع التحقق التلقائي عبر Tronscan API
@@ -26,26 +27,14 @@
 
 ### البرامج المطلوبة
 - Python 3.8+
-- Tesseract OCR
 - PostgreSQL/MySQL (اختياري، يمكن استخدام SQLite)
 
-### تثبيت Tesseract OCR
+### متطلبات إضافية
 
-**Windows:**
-```bash
-# تحميل من الرابط التالي:
-# https://github.com/UB-Mannheim/tesseract/wiki
-```
-
-**Linux:**
-```bash
-sudo apt-get install tesseract-ocr tesseract-ocr-ara
-```
-
-**macOS:**
-```bash
-brew install tesseract
-```
+**Google Cloud Vision API:**
+- حساب Google Cloud Platform
+- تفعيل Cloud Vision API
+- Service Account مع صلاحيات Cloud Vision
 
 ## 📦 التثبيت
 
@@ -224,11 +213,12 @@ systemctl status cidbot
 
 ## 🐛 استكشاف الأخطاء
 
-### مشاكل OCR الشائعة
+### مشاكل Google Vision API الشائعة
 ```python
-# تحقق من تثبيت Tesseract
-import pytesseract
-print(pytesseract.get_tesseract_version())
+# تحقق من تثبيت Google Vision API
+from google.cloud import vision
+client = vision.ImageAnnotatorClient()
+print("Google Vision API connected successfully")
 ```
 
 ### مشاكل قاعدة البيانات
