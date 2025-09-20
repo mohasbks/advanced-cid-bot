@@ -64,10 +64,10 @@ class AdvancedCIDBot:
             except Exception as e:
                 logger.warning(f"Failed to initialize Google Vision: {e}")
         
-        # Check Vision API availability
+        # Check Vision API availability (optional)
         if not self.vision_service:
-            logger.error("❌ Google Vision API not available - Bot cannot function")
-            raise Exception("Google Vision API is required for this bot")
+            logger.warning("⚠️ Google Vision API not available - Using pytesseract fallback")
+            logger.info("📝 Using pytesseract for OCR processing")
         else:
             logger.info("✨ Using Google Vision API for OCR")
             
@@ -294,6 +294,42 @@ class AdvancedCIDBot:
                         vision_result['success'] = False
                 else:
                     logger.warning(f"❌ Google Vision failed: {vision_result['error']}")
+            
+            # Fallback to pytesseract if Google Vision failed or unavailable
+            if not installation_id:
+                logger.info("🔄 Trying pytesseract fallback...")
+                try:
+                    import pytesseract
+                    from PIL import Image
+                    import cv2
+                    import numpy as np
+                    
+                    # Process image with OpenCV for better OCR
+                    img = cv2.imread(photo_path)
+                    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                    
+                    # Apply image processing for better OCR
+                    gray = cv2.medianBlur(gray, 3)
+                    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+                    
+                    # Extract text using pytesseract
+                    ocr_text = pytesseract.image_to_string(thresh, config='--psm 6 -c tessedit_char_whitelist=0123456789')
+                    
+                    # Extract 63-digit number
+                    import re
+                    numbers = re.findall(r'\d{50,}', ocr_text.replace(' ', '').replace('\n', ''))
+                    
+                    for num in numbers:
+                        if len(num) >= 50:
+                            installation_id = num[:63] if len(num) > 63 else num
+                            logger.info(f"✅ Pytesseract success: extracted {len(installation_id)} digits")
+                            break
+                    
+                    if not installation_id:
+                        logger.warning("❌ Pytesseract: No valid installation ID found")
+                        
+                except Exception as e:
+                    logger.error(f"❌ Pytesseract fallback failed: {e}")
             
             # Clean up temp file
             import os
