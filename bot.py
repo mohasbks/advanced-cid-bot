@@ -63,17 +63,31 @@ class AdvancedCIDBot:
             try:
                 import json
                 import tempfile
+                import os
                 from services.google_vision_service import GoogleVisionService
+                
+                # Parse JSON to validate it
+                json.loads(credentials_json)
                 
                 # Write JSON to temp file
                 with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
                     f.write(credentials_json)
                     temp_credentials_path = f.name
                 
-                self.vision_service = GoogleVisionService(temp_credentials_path)
-                logger.info("🚀 Google Vision API initialized from environment variable")
+                # Ensure file exists and is readable
+                if os.path.exists(temp_credentials_path):
+                    self.vision_service = GoogleVisionService(temp_credentials_path)
+                    logger.info("🚀 Google Vision API initialized from environment variable")
+                else:
+                    logger.error("❌ Failed to create temp credentials file")
+                    
+            except json.JSONDecodeError as e:
+                logger.error(f"❌ Invalid JSON in GOOGLE_CLOUD_CREDENTIALS: {e}")
             except Exception as e:
-                logger.warning(f"Failed to initialize Google Vision from env var: {e}")
+                logger.error(f"❌ Failed to initialize Google Vision from env var: {e}")
+                logger.error(f"Credentials length: {len(credentials_json) if credentials_json else 0}")
+                if credentials_json:
+                    logger.error(f"Credentials start: {credentials_json[:100]}...")
         
         # Fallback to file path
         elif os.path.exists(credentials_path):
@@ -87,6 +101,9 @@ class AdvancedCIDBot:
         # Check Vision API availability (required)
         if not self.vision_service:
             logger.error("❌ Google Vision API is required for accurate OCR")
+            logger.error(f"Debug: credentials_json length = {len(credentials_json) if credentials_json else 0}")
+            logger.error(f"Debug: credentials_path exists = {os.path.exists(credentials_path)}")
+            logger.error(f"Debug: credentials_path = {credentials_path}")
             raise Exception("Google Vision API is required for this bot")
         else:
             logger.info("✨ Using Google Vision API for OCR")
