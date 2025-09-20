@@ -54,15 +54,35 @@ class AdvancedCIDBot:
     def __init__(self):
         # Initialize Google Vision API first
         self.vision_service = None
+        # Try environment variable first, then file path
+        credentials_json = os.getenv('GOOGLE_CLOUD_CREDENTIALS')
         credentials_path = os.getenv('GOOGLE_CLOUD_CREDENTIALS_PATH', './seismic-octane-471921-n4-1dca51f146a8.json')
         
-        if os.path.exists(credentials_path):
+        # Try credentials from environment variable first
+        if credentials_json:
+            try:
+                import json
+                import tempfile
+                from services.google_vision_service import GoogleVisionService
+                
+                # Write JSON to temp file
+                with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+                    f.write(credentials_json)
+                    temp_credentials_path = f.name
+                
+                self.vision_service = GoogleVisionService(temp_credentials_path)
+                logger.info("🚀 Google Vision API initialized from environment variable")
+            except Exception as e:
+                logger.warning(f"Failed to initialize Google Vision from env var: {e}")
+        
+        # Fallback to file path
+        elif os.path.exists(credentials_path):
             try:
                 from services.google_vision_service import GoogleVisionService
                 self.vision_service = GoogleVisionService(credentials_path)
-                logger.info("🚀 Google Vision API initialized successfully")
+                logger.info("🚀 Google Vision API initialized from file")
             except Exception as e:
-                logger.warning(f"Failed to initialize Google Vision: {e}")
+                logger.warning(f"Failed to initialize Google Vision from file: {e}")
         
         # Check Vision API availability (required)
         if not self.vision_service:
