@@ -14,18 +14,40 @@ logger = logging.getLogger(__name__)
 class GoogleVisionService:
     """Google Cloud Vision API for high-accuracy OCR"""
     
-    def __init__(self, credentials_path: str):
+    def __init__(self, credentials_path: str = None, credentials_json: str = None):
         """Initialize Google Vision client"""
         try:
-            # Load credentials from JSON file
-            credentials = service_account.Credentials.from_service_account_file(
-                credentials_path,
-                scopes=['https://www.googleapis.com/auth/cloud-platform']
-            )
+            if credentials_json:
+                # Load credentials from JSON string (Railway deployment)
+                import json
+                credentials_info = json.loads(credentials_json)
+                credentials = service_account.Credentials.from_service_account_info(
+                    credentials_info,
+                    scopes=[
+                        'https://www.googleapis.com/auth/cloud-platform',
+                        'https://www.googleapis.com/auth/cloud-vision'
+                    ]
+                )
+                logger.info("Google Vision API initialized from JSON credentials")
+                
+            elif credentials_path:
+                # Load credentials from JSON file (local development)
+                os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_path
+                credentials = service_account.Credentials.from_service_account_file(
+                    credentials_path,
+                    scopes=[
+                        'https://www.googleapis.com/auth/cloud-platform',
+                        'https://www.googleapis.com/auth/cloud-vision'
+                    ]
+                )
+                logger.info("Google Vision API initialized from file credentials")
+                
+            else:
+                raise ValueError("Either credentials_path or credentials_json must be provided")
             
             # Initialize the client
             self.client = vision.ImageAnnotatorClient(credentials=credentials)
-            logger.info(f"Google Vision API initialized successfully")
+            logger.info(f"Google Vision API client initialized successfully")
             
         except Exception as e:
             logger.error(f"Failed to initialize Google Vision API: {e}")
