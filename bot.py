@@ -61,6 +61,10 @@ class AdvancedCIDBot:
         if credentials_json:
             logger.info("✅ Valid Google credentials JSON found in environment variable")
             try:
+                import json
+                # Validate JSON first
+                json.loads(credentials_json)
+                
                 # Initialize Vision API directly with JSON credentials (no temp file needed)
                 from services.google_vision_service import GoogleVisionService
                 self.vision_service = GoogleVisionService(credentials_json=credentials_json)
