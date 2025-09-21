@@ -327,7 +327,8 @@ class AdminHandlers:
 
 اختر الباقة التي تريد إنشاء كودات لها:
 
-1️⃣ باقة صغيرة - 25 CID
+🔟 باقة تجريبية - 10 CID
+1️⃣ باقة صغيرة - 30 CID
 2️⃣ باقة متوسطة - 50 CID  
 3️⃣ باقة كبيرة - 100 CID
 4️⃣ باقة مميزة - 500 CID
@@ -340,10 +341,11 @@ class AdminHandlers:
 اختر الباقة لتحديد عدد الكودات المطلوبة"""
         
         keyboard = [
-            [InlineKeyboardButton("1️⃣ 25 CID", callback_data="admin_gen_pkg_1"),
-             InlineKeyboardButton("2️⃣ 50 CID", callback_data="admin_gen_pkg_2")],
-            [InlineKeyboardButton("3️⃣ 100 CID", callback_data="admin_gen_pkg_3"),
-             InlineKeyboardButton("4️⃣ 500 CID", callback_data="admin_gen_pkg_4")],
+            [InlineKeyboardButton("🔟 10 CID", callback_data="admin_gen_pkg_0"),
+             InlineKeyboardButton("1️⃣ 30 CID", callback_data="admin_gen_pkg_1")],
+            [InlineKeyboardButton("2️⃣ 50 CID", callback_data="admin_gen_pkg_2"),
+             InlineKeyboardButton("3️⃣ 100 CID", callback_data="admin_gen_pkg_3")],
+            [InlineKeyboardButton("4️⃣ 500 CID", callback_data="admin_gen_pkg_4"),
             [InlineKeyboardButton("5️⃣ 1000 CID", callback_data="admin_gen_pkg_5"),
              InlineKeyboardButton("6️⃣ 2000 CID", callback_data="admin_gen_pkg_6")],
             [InlineKeyboardButton("7️⃣ 5000 CID", callback_data="admin_gen_pkg_7"),
@@ -364,7 +366,8 @@ class AdminHandlers:
         
         # Package mapping
         packages = {
-            1: {'name': 'باقة صغيرة', 'cid_amount': 25, 'price_usd': 5.33},
+            0: {'name': 'باقة تجريبية', 'cid_amount': 10, 'price_usd': 2.67},
+            1: {'name': 'باقة صغيرة', 'cid_amount': 30, 'price_usd': 6.40},
             2: {'name': 'باقة متوسطة', 'cid_amount': 50, 'price_usd': 6.67},
             3: {'name': 'باقة كبيرة', 'cid_amount': 100, 'price_usd': 12.53},
             4: {'name': 'باقة مميزة', 'cid_amount': 500, 'price_usd': 56.53},
