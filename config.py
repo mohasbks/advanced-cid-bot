@@ -10,12 +10,13 @@ from typing import List, Dict
 @dataclass
 class DatabaseConfig:
     """Database configuration"""
-    type: str = "sqlite"  # sqlite or mysql
-    name: str = os.path.join(os.path.dirname(__file__), "advanced_cid_bot.db")  # Use local database with real data
-    host: str = "localhost"
-    user: str = ""
-    password: str = ""
-    port: int = 3306
+    type: str = os.getenv("DATABASE_TYPE", "postgresql")  # postgresql, sqlite, or mysql
+    name: str = os.getenv("DATABASE_NAME", "advanced_cid_bot")
+    host: str = os.getenv("DATABASE_HOST", "localhost")
+    user: str = os.getenv("DATABASE_USER", "postgres")
+    password: str = os.getenv("DATABASE_PASSWORD", "")
+    port: int = int(os.getenv("DATABASE_PORT", "5432"))
+    url: str = os.getenv("DATABASE_URL", "")  # Full connection URL (Railway provides this)
 
 @dataclass
 class TelegramConfig:
