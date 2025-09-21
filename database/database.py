@@ -52,7 +52,7 @@ class Database:
             )
             
             # Drop and recreate tables with updated schema (BIGINT support for Telegram user IDs)
-            # Force Railway redeploy - Updated 2025-09-21 12:20 - FIXED SyntaxError in bot_admin_handlers.py
+            # Force Railway redeploy - Updated 2025-09-21 13:46 - Safe keyboard builder method
             Base.metadata.drop_all(bind=self.engine)
             Base.metadata.create_all(bind=self.engine)
             
