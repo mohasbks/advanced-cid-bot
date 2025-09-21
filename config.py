@@ -76,7 +76,8 @@ class Config:
         
         # Define packages
         self.packages = [
-            Package(1, "باقة صغيرة", 25, 20.0, 20.0 / self.usd_to_sar),
+            Package(0, "باقة تجريبية", 10, 10.0, 10.0 / self.usd_to_sar),
+            Package(1, "باقة صغيرة", 30, 24.0, 24.0 / self.usd_to_sar),
             Package(2, "باقة متوسطة", 50, 25.0, 25.0 / self.usd_to_sar),
             Package(3, "باقة كبيرة", 100, 47.0, 47.0 / self.usd_to_sar),
             Package(4, "باقة ممتازة", 500, 212.0, 212.0 / self.usd_to_sar),
