@@ -27,17 +27,28 @@ class Database:
     def _initialize_database(self):
         """Initialize database connection"""
         try:
-            if config.database.type == "sqlite":
+            # Check if DATABASE_URL is provided (Railway style)
+            if config.database.url:
+                database_url = config.database.url
+            elif config.database.type == "postgresql":
+                database_url = f"postgresql+psycopg2://{config.database.user}:{config.database.password}@{config.database.host}:{config.database.port}/{config.database.name}"
+            elif config.database.type == "sqlite":
                 database_url = f"sqlite:///{config.database.name}"
             elif config.database.type == "mysql":
                 database_url = f"mysql+pymysql://{config.database.user}:{config.database.password}@{config.database.host}:{config.database.port}/{config.database.name}"
             else:
                 raise ValueError(f"Unsupported database type: {config.database.type}")
             
+            # PostgreSQL specific connection arguments
+            connect_args = {}
+            if config.database.type == "sqlite":
+                connect_args = {"check_same_thread": False}
+            
             self.engine = create_engine(
                 database_url,
                 echo=False,  # Set to True for SQL logging
-                pool_pre_ping=True
+                pool_pre_ping=True,
+                connect_args=connect_args
             )
             
             # Create tables
