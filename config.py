@@ -74,17 +74,17 @@ class Config:
         # Exchange rates (update periodically)
         self.usd_to_sar = 3.75  # 1 USD = 3.75 SAR (approximate)
         
-        # Define packages
+        # Define packages - Updated with new 10 CID and 30 CID packages
         self.packages = [
-            Package(0, "باقة تجريبية", 10, 10.0, 10.0 / self.usd_to_sar),
-            Package(1, "باقة صغيرة", 30, 24.0, 24.0 / self.usd_to_sar),
-            Package(2, "باقة متوسطة", 50, 25.0, 25.0 / self.usd_to_sar),
-            Package(3, "باقة كبيرة", 100, 47.0, 47.0 / self.usd_to_sar),
-            Package(4, "باقة ممتازة", 500, 212.0, 212.0 / self.usd_to_sar),
-            Package(5, "باقة فائقة", 1000, 385.0, 385.0 / self.usd_to_sar),
-            Package(6, "باقة احترافية", 2000, 693.0, 693.0 / self.usd_to_sar),
-            Package(7, "باقة المؤسسات", 5000, 1530.0, 1530.0 / self.usd_to_sar),
-            Package(8, "باقة الشركات", 10000, 2860.14, 2860.14 / self.usd_to_sar),
+            Package(0, "باقة تجريبية", 10, 2.67, 2.67 / self.usd_to_sar),
+            Package(1, "باقة صغيرة", 30, 6.40, 6.40 / self.usd_to_sar),
+            Package(2, "باقة متوسطة", 50, 6.67, 6.67 / self.usd_to_sar),
+            Package(3, "باقة كبيرة", 100, 12.53, 12.53 / self.usd_to_sar),
+            Package(4, "باقة مميزة", 500, 56.53, 56.53 / self.usd_to_sar),
+            Package(5, "باقة متقدمة", 1000, 102.67, 102.67 / self.usd_to_sar),
+            Package(6, "باقة احترافية", 2000, 184.80, 184.80 / self.usd_to_sar),
+            Package(7, "باقة ضخمة", 5000, 408.00, 408.00 / self.usd_to_sar),
+            Package(8, "باقة عملاقة", 10000, 762.70, 762.70 / self.usd_to_sar),
         ]
     
     def get_package_by_id(self, package_id: int) -> Package:
