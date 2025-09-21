@@ -3,7 +3,7 @@ Database models for Advanced CID Telegram Bot
 SQLite/MySQL compatible models using SQLAlchemy
 """
 
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, Text, ForeignKey
+from sqlalchemy import Column, Integer, BigInteger, String, Float, DateTime, Boolean, Text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -15,7 +15,7 @@ class User(Base):
     __tablename__ = 'users'
     
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, unique=True, nullable=False)  # Telegram user ID
+    user_id = Column(BigInteger, unique=True, nullable=False)  # Telegram user ID
     username = Column(String(255), nullable=True)
     first_name = Column(String(255), nullable=True)
     last_name = Column(String(255), nullable=True)
@@ -83,7 +83,7 @@ class Voucher(Base):
     cid_amount = Column(Integer, nullable=False)
     usd_amount = Column(Float, nullable=False)
     is_used = Column(Boolean, default=False)
-    created_by_admin = Column(Integer, nullable=True)  # Admin user ID who created it
+    created_by_admin = Column(BigInteger, nullable=True)  # Admin user ID who created it
     created_at = Column(DateTime, default=datetime.utcnow)
     expires_at = Column(DateTime, nullable=True)
     
@@ -125,9 +125,9 @@ class AdminLog(Base):
     __tablename__ = 'admin_logs'
     
     id = Column(Integer, primary_key=True)
-    admin_user_id = Column(Integer, nullable=False)
+    admin_user_id = Column(BigInteger, nullable=False)
     action = Column(String(255), nullable=False)
-    target_user_id = Column(Integer, nullable=True)
+    target_user_id = Column(BigInteger, nullable=True)
     details = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
