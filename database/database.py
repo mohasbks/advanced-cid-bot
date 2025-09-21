@@ -52,7 +52,7 @@ class Database:
             )
             
             # Drop and recreate tables with updated schema (BIGINT support for Telegram user IDs)
-            # Force Railway redeploy - Updated 2025-09-21 14:11 - Fixed import error: Config not AppConfig
+            # Force Railway redeploy - Updated 2025-09-21 14:34 - Added blocked code detection with WhatsApp support
             Base.metadata.drop_all(bind=self.engine)
             Base.metadata.create_all(bind=self.engine)
             
