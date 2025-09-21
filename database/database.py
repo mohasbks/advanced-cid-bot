@@ -52,7 +52,7 @@ class Database:
             )
             
             # Drop and recreate tables with updated schema (BIGINT support for Telegram user IDs)
-            # Force Railway redeploy - Updated 2025-09-21 11:50 - Fixed vouchers to only add CID, not USD
+            # Force Railway redeploy - Updated 2025-09-21 12:14 - Admin packages: 10 CID new, 25→30 CID
             Base.metadata.drop_all(bind=self.engine)
             Base.metadata.create_all(bind=self.engine)
             
