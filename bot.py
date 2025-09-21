@@ -2341,11 +2341,26 @@ class AdvancedCIDBot:
         
         # Setup handlers
         self.setup_handlers()
-        
+        # Start the bot
         logger.info("Advanced CID Bot started successfully!")
         
-        # Start the bot
-        self.application.run_polling(drop_pending_updates=True)
+        # Use webhook for Railway deployment, polling for local
+        port = int(os.getenv("PORT", 8000))
+        webhook_url = os.getenv("WEBHOOK_URL")
+        
+        if webhook_url:
+            # Webhook mode (Railway)
+            logger.info(f"🌐 Starting webhook mode on port {port}")
+            self.application.run_webhook(
+                listen="0.0.0.0",
+                port=port,
+                url_path=f"/webhook/{config.telegram.bot_token}",
+                webhook_url=f"{webhook_url}/webhook/{config.telegram.bot_token}"
+            )
+        else:
+            # Polling mode (local development)
+            logger.info("🔄 Starting polling mode")
+            self.application.run_polling(poll_interval=1, timeout=30)
 
 def main():
     """Main function to run the bot"""
