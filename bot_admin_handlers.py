@@ -321,6 +321,46 @@ class AdminHandlers:
         
         context.user_data['waiting_for'] = 'admin_subtract_balance'
 
+    def _build_packages_keyboard(self):
+        """Build the packages keyboard safely"""
+        keyboard = []
+        
+        # Row 1
+        row1 = []
+        row1.append(InlineKeyboardButton("🔟 10 CID", callback_data="admin_gen_pkg_0"))
+        row1.append(InlineKeyboardButton("1️⃣ 30 CID", callback_data="admin_gen_pkg_1"))
+        keyboard.append(row1)
+        
+        # Row 2  
+        row2 = []
+        row2.append(InlineKeyboardButton("2️⃣ 50 CID", callback_data="admin_gen_pkg_2"))
+        row2.append(InlineKeyboardButton("3️⃣ 100 CID", callback_data="admin_gen_pkg_3"))
+        keyboard.append(row2)
+        
+        # Row 3
+        row3 = []
+        row3.append(InlineKeyboardButton("4️⃣ 500 CID", callback_data="admin_gen_pkg_4"))
+        keyboard.append(row3)
+        
+        # Row 4
+        row4 = []
+        row4.append(InlineKeyboardButton("5️⃣ 1000 CID", callback_data="admin_gen_pkg_5"))
+        row4.append(InlineKeyboardButton("6️⃣ 2000 CID", callback_data="admin_gen_pkg_6"))
+        keyboard.append(row4)
+        
+        # Row 5
+        row5 = []
+        row5.append(InlineKeyboardButton("7️⃣ 5000 CID", callback_data="admin_gen_pkg_7"))
+        row5.append(InlineKeyboardButton("8️⃣ 10000 CID", callback_data="admin_gen_pkg_8"))
+        keyboard.append(row5)
+        
+        # Row 6
+        row6 = []
+        row6.append(InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data="admin_panel"))
+        keyboard.append(row6)
+        
+        return keyboard
+
     async def handle_generate_vouchers(self, query, context):
         """Handle voucher generation - step 1: choose package"""
         packages_text = """🎫 **توليد أكواد - اختيار الباقة**
@@ -340,18 +380,7 @@ class AdminHandlers:
 ━━━━━━━━━━━━━━━━━━━━━
 اختر الباقة لتحديد عدد الكودات المطلوبة"""
         
-        keyboard = [
-            [InlineKeyboardButton("🔟 10 CID", callback_data="admin_gen_pkg_0"),
-             InlineKeyboardButton("1️⃣ 30 CID", callback_data="admin_gen_pkg_1")],
-            [InlineKeyboardButton("2️⃣ 50 CID", callback_data="admin_gen_pkg_2"),
-             InlineKeyboardButton("3️⃣ 100 CID", callback_data="admin_gen_pkg_3")],
-            [InlineKeyboardButton("4️⃣ 500 CID", callback_data="admin_gen_pkg_4"),
-            [InlineKeyboardButton("5️⃣ 1000 CID", callback_data="admin_gen_pkg_5"),
-             InlineKeyboardButton("6️⃣ 2000 CID", callback_data="admin_gen_pkg_6")],
-            [InlineKeyboardButton("7️⃣ 5000 CID", callback_data="admin_gen_pkg_7"),
-             InlineKeyboardButton("8️⃣ 10000 CID", callback_data="admin_gen_pkg_8")],
-            [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data="admin_panel")]
-        ]
+        keyboard = self._build_packages_keyboard()
         reply_markup = InlineKeyboardMarkup(keyboard)
         
         await query.edit_message_text(
