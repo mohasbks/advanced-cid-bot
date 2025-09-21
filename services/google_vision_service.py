@@ -21,6 +21,13 @@ class GoogleVisionService:
                 # Load credentials from JSON string (Railway deployment)
                 import json
                 credentials_info = json.loads(credentials_json)
+                
+                # Fix private key line breaks for Railway environment
+                if 'private_key' in credentials_info:
+                    # Replace escaped \n with actual line breaks
+                    credentials_info['private_key'] = credentials_info['private_key'].replace('\\n', '\n')
+                    logger.info("Private key line breaks fixed for Railway")
+                
                 credentials = service_account.Credentials.from_service_account_info(
                     credentials_info,
                     scopes=[
