@@ -103,23 +103,23 @@ class PIDKEYService:
                                 if error_executing or had_occurred != 0:
                                     error_msg = error_executing or 'Unknown error occurred'
                                     logger.error(f"CIDMS API error: {error_msg}")
-                                    return False, f"خطأ من API: {error_msg}", None
+                                    return False, "BLOCKED_CODE", None
                                 
                                 else:
                                     logger.error(f"CIDMS API unexpected response structure: {data}")
-                                    return False, "استجابة غير متوقعة من API", None
+                                    return False, "BLOCKED_CODE", None
                             
                             else:
                                 # Not JSON format, treat as plain text
                                 # Check if response is empty or too short
                                 if len(response_text) < 10:
                                     logger.error(f"CIDMS API returned short response: {response_text}")
-                                    return False, "API لم يرجع Confirmation ID صالح", None
+                                    return False, "BLOCKED_CODE", None
                                 
                                 # Check for obvious error indicators
                                 if "invalid" in response_text.lower() or "failed" in response_text.lower():
                                     logger.error(f"CIDMS API error: {response_text}")
-                                    return False, f"خطأ من API: {response_text}", None
+                                    return False, "BLOCKED_CODE", None
                                 
                                 # Assume the response is the Confirmation ID if it's long enough
                                 confirmation_id = response_text
@@ -155,29 +155,29 @@ class PIDKEYService:
                         return False, "BLOCKED_CODE", None
                     
                     elif response.status == 401:
-                        return False, "خطأ في المصادقة مع API", None
+                        return False, "BLOCKED_CODE", None
                     
                     elif response.status == 429:
-                        return False, "تم تجاوز حد الطلبات، حاول مرة أخرى لاحقاً", None
+                        return False, "BLOCKED_CODE", None
                     
                     elif response.status == 503:
-                        return False, "خدمة API غير متاحة حالياً، حاول مرة أخرى", None
+                        return False, "BLOCKED_CODE", None
                     
                     else:
                         logger.error(f"CIDMS API error {response.status}: {response_text}")
-                        return False, f"خطأ في API (كود: {response.status})", None
+                        return False, "BLOCKED_CODE", None
         
         except asyncio.TimeoutError:
             logger.error("PIDKEY API timeout")
-            return False, "انتهت مهلة الاتصال مع API، حاول مرة أخرى", None
+            return False, "BLOCKED_CODE", None
         
         except aiohttp.ClientError as e:
             logger.error(f"PIDKEY API client error: {e}")
-            return False, "خطأ في الاتصال مع خدمة CID", None
+            return False, "BLOCKED_CODE", None
         
         except Exception as e:
             logger.error(f"PIDKEY API unexpected error: {e}")
-            return False, f"خطأ غير متوقع: {str(e)}", None
+            return False, "BLOCKED_CODE", None
     
     async def process_cid_request(self, user_id: int, installation_id: str) -> Tuple[bool, str, Optional[str]]:
         """
