@@ -393,17 +393,19 @@ class AdminHandlers:
         """Handle package selection for voucher generation"""
         package_id = int(query.data.split("_")[-1])
         
-        # Package mapping
-        packages = {
-            0: {'name': 'باقة تجريبية', 'cid_amount': 10, 'price_usd': 2.67},
-            1: {'name': 'باقة صغيرة', 'cid_amount': 30, 'price_usd': 6.40},
-            2: {'name': 'باقة متوسطة', 'cid_amount': 50, 'price_usd': 6.67},
-            3: {'name': 'باقة كبيرة', 'cid_amount': 100, 'price_usd': 12.53},
-            4: {'name': 'باقة مميزة', 'cid_amount': 500, 'price_usd': 56.53},
-            5: {'name': 'باقة متقدمة', 'cid_amount': 1000, 'price_usd': 102.67},
-            6: {'name': 'باقة احترافية', 'cid_amount': 2000, 'price_usd': 184.80},
-            7: {'name': 'باقة ضخمة', 'cid_amount': 5000, 'price_usd': 408.00},
-            8: {'name': 'باقة عملاقة', 'cid_amount': 10000, 'price_usd': 762.70}
+        # Get package mapping from config to ensure consistency
+        from config import AppConfig
+        config = AppConfig()
+        
+        if package_id >= len(config.packages):
+            await query.edit_message_text("❌ باقة غير صحيحة")
+            return
+            
+        package_config = config.packages[package_id]
+        package = {
+            'name': package_config.name,
+            'cid_amount': package_config.cid_amount,
+            'price_usd': package_config.price_usd
         }
         
         package = packages.get(package_id)
