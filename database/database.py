@@ -51,7 +51,9 @@ class Database:
                 connect_args=connect_args
             )
             
-            # Create tables
+            # Drop and recreate tables with updated schema (BIGINT support for Telegram user IDs)
+            # Force Railway redeploy - Updated 2025-09-21 for PostgreSQL BIGINT compatibility
+            Base.metadata.drop_all(bind=self.engine)
             Base.metadata.create_all(bind=self.engine)
             
             # Create session factory
