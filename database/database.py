@@ -52,7 +52,7 @@ class Database:
             )
             
             # Drop and recreate tables with updated schema (BIGINT support for Telegram user IDs)
-            # Force Railway redeploy - Updated 2025-09-21 11:40 - FINAL FIX: user query moved before VoucherUse creation
+            # Force Railway redeploy - Updated 2025-09-21 11:50 - Fixed vouchers to only add CID, not USD
             Base.metadata.drop_all(bind=self.engine)
             Base.metadata.create_all(bind=self.engine)
             
@@ -379,9 +379,9 @@ class Database:
                 voucher_use = VoucherUse(voucher_id=voucher.id, user_id=user.id)
                 session.add(voucher_use)
                 
-                # Update user balance
+                # Update user balance - vouchers only add CID, not USD
                 user.balance_cid += voucher.cid_amount
-                user.balance_usd += voucher.usd_amount
+                # USD balance is only increased from Binance deposits, not vouchers
                 
                 session.commit()
                 session.refresh(voucher)  # Refresh to ensure object is up-to-date
