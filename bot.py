@@ -395,8 +395,27 @@ class AdvancedCIDBot:
                     )
                 
             else:
-                await processing_msg.edit_text(
-                    f"""❌ فشل في إنشاء Confirmation ID
+                # Check if it's a blocked code
+                if message == "BLOCKED_CODE":
+                    await processing_msg.edit_text(
+                        """🚫 **الكود محجوب**
+
+📋 Installation ID المرسل:
+```
+{}
+```
+
+⚠️ هذا الكود محجوب ولا يمكن معالجته حالياً.
+
+📱 **للمساعدة تواصل معنا:**
+[اضغط هنا للتواصل عبر الواتساب](https://wa.me/+966533836006?text=سلام%20عليكم%20عندي%20كود%20محجوب%20ارغب%20في%20تغيره)
+
+📞 أو استخدم: `/contact`""".format(installation_id),
+                        parse_mode='Markdown'
+                    )
+                else:
+                    await processing_msg.edit_text(
+                        f"""❌ فشل في إنشاء Confirmation ID
 🔍 Installation ID المستخرج:
 ```
 {installation_id}
@@ -409,7 +428,7 @@ class AdvancedCIDBot:
 • تواصل مع الدعم الفني
 
 📞 للمساعدة: `/contact`""",
-                    )
+                        )
                 
         except Exception as e:
             logger.error(f"Error processing photo for user {user_id}: {e}")
@@ -493,8 +512,27 @@ class AdvancedCIDBot:
                 )
                 
             else:
-                await processing_msg.edit_text(
-                    f"""❌ فشل في إنشاء Confirmation ID
+                # Check if it's a blocked code
+                if message == "BLOCKED_CODE":
+                    await processing_msg.edit_text(
+                        """🚫 **الكود محجوب**
+
+📋 Installation ID المرسل:
+```
+{}
+```
+
+⚠️ هذا الكود محجوب ولا يمكن معالجته حالياً.
+
+📱 **للمساعدة تواصل معنا:**
+[اضغط هنا للتواصل عبر الواتساب](https://wa.me/+966533836006?text=سلام%20عليكم%20عندي%20كود%20محجوب%20ارغب%20في%20تغيره)
+
+📞 أو استخدم: `/contact`""".format(installation_id),
+                        parse_mode='Markdown'
+                    )
+                else:
+                    await processing_msg.edit_text(
+                        f"""❌ فشل في إنشاء Confirmation ID
 🔍 Installation ID المدخل:
 ```
 {installation_id}
@@ -508,7 +546,7 @@ class AdvancedCIDBot:
 • تواصل مع الدعم الفني
 
 📞 للمساعدة: `/contact`""",
-                )
+                    )
                 
         except Exception as e:
             logger.error(f"Error processing text Installation ID for user {user_id}: {e}")
