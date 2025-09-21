@@ -46,13 +46,13 @@ class Database:
             
             self.engine = create_engine(
                 database_url,
-                echo=False,  # Set to True for SQL logging
+                echo=False,  # SQL logging disabled - BIGINT issue resolved
                 pool_pre_ping=True,
                 connect_args=connect_args
             )
             
             # Drop and recreate tables with updated schema (BIGINT support for Telegram user IDs)
-            # Force Railway redeploy - Updated 2025-09-21 11:13 - Fixed ALL user_id columns to BIGINT
+            # Force Railway redeploy - Updated 2025-09-21 11:22 - Fixed users.id to BigInteger to match foreign keys
             Base.metadata.drop_all(bind=self.engine)
             Base.metadata.create_all(bind=self.engine)
             
