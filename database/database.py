@@ -52,7 +52,7 @@ class Database:
             )
             
             # Drop and recreate tables with updated schema (BIGINT support for Telegram user IDs)
-            # Force Railway redeploy - Updated 2025-09-21 11:22 - Fixed users.id to BigInteger to match foreign keys
+            # Force Railway redeploy - Updated 2025-09-21 11:40 - FINAL FIX: user query moved before VoucherUse creation
             Base.metadata.drop_all(bind=self.engine)
             Base.metadata.create_all(bind=self.engine)
             
@@ -364,18 +364,24 @@ class Database:
                 if voucher.expires_at and voucher.expires_at < datetime.utcnow():
                     return False, "انتهت صلاحية هذا الكود", None
                 
+                # Get user first before any operations
+                user = session.query(User).filter_by(user_id=user_id).first()
+                if not user:
+                    logger.error(f"User not found for Telegram ID: {user_id}")
+                    return False, "المستخدم غير موجود - يرجى استخدام /start أولاً", None
+                
+                logger.info(f"Found user - DB ID: {user.id}, Telegram ID: {user_id}")
+                
                 # Mark voucher as used
                 voucher.is_used = True
                 
-                # Create voucher use record
-                voucher_use = VoucherUse(voucher_id=voucher.id, user_id=user_id)
+                # Create voucher use record - use database user.id, not Telegram user_id
+                voucher_use = VoucherUse(voucher_id=voucher.id, user_id=user.id)
                 session.add(voucher_use)
                 
                 # Update user balance
-                user = session.query(User).filter_by(user_id=user_id).first()
-                if user:
-                    user.balance_cid += voucher.cid_amount
-                    user.balance_usd += voucher.usd_amount
+                user.balance_cid += voucher.cid_amount
+                user.balance_usd += voucher.usd_amount
                 
                 session.commit()
                 session.refresh(voucher)  # Refresh to ensure object is up-to-date
