@@ -134,12 +134,14 @@ class PIDKEYService:
                             # Check for obvious error indicators
                             if "invalid" in response_text.lower() or "failed" in response_text.lower():
                                 logger.error(f"CIDMS API error: {response_text}")
-                                return False, f"خطأ من API: {response_text}", None
-                            
+                                return False, "BLOCKED_CODE", None
+                            elif "blocked" in response_text.lower() or "banned" in response_text.lower():
+                                return False, "BLOCKED_CODE", None
+                                
                             # Check if response is empty or too short
                             if len(response_text) < 10:
                                 logger.error(f"CIDMS API returned short response: {response_text}")
-                                return False, "API لم يرجع Confirmation ID صالح", None
+                                return False, "BLOCKED_CODE", None
                             
                             # Assume the response is the Confirmation ID
                             confirmation_id = response_text
@@ -147,10 +149,10 @@ class PIDKEYService:
                             return True, "تم إنشاء Confirmation ID بنجاح", confirmation_id
                     
                     elif response.status == 400:
-                        return False, "Installation ID غير صالح أو غير مدعوم", None
+                        return False, "BLOCKED_CODE", None
                     
                     elif response.status == 403:
-                        return False, "🚫 الكود محجوب أو غير مدعوم.\n\n📞 للمساعدة استخدم /contact", None
+                        return False, "BLOCKED_CODE", None
                     
                     elif response.status == 401:
                         return False, "خطأ في المصادقة مع API", None
