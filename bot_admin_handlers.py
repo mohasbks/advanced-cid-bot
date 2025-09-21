@@ -394,8 +394,7 @@ class AdminHandlers:
         package_id = int(query.data.split("_")[-1])
         
         # Get package mapping from config to ensure consistency
-        from config import AppConfig
-        config = AppConfig()
+        from config import config
         
         if package_id >= len(config.packages):
             await query.edit_message_text("❌ باقة غير صحيحة")
@@ -407,11 +406,6 @@ class AdminHandlers:
             'cid_amount': package_config.cid_amount,
             'price_usd': package_config.price_usd
         }
-        
-        package = packages.get(package_id)
-        if not package:
-            await query.edit_message_text("❌ باقة غير صحيحة")
-            return
         
         # Store selected package in context
         context.user_data['selected_package'] = package
