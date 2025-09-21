@@ -52,7 +52,7 @@ class Database:
             )
             
             # Drop and recreate tables with updated schema (BIGINT support for Telegram user IDs)
-            # Force Railway redeploy - Updated 2025-09-21 for PostgreSQL BIGINT compatibility
+            # Force Railway redeploy - Updated 2025-09-21 11:13 - Fixed ALL user_id columns to BIGINT
             Base.metadata.drop_all(bind=self.engine)
             Base.metadata.create_all(bind=self.engine)
             
