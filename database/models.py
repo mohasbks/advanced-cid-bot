@@ -14,7 +14,7 @@ class User(Base):
     """User model"""
     __tablename__ = 'users'
     
-    id = Column(Integer, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
     user_id = Column(BigInteger, unique=True, nullable=False)  # Telegram user ID
     username = Column(String(255), nullable=True)
     first_name = Column(String(255), nullable=True)
