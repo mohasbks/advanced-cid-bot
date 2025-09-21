@@ -5,7 +5,7 @@ python-telegram-bot==20.7
 
 # Database
 sqlalchemy==2.0.23
-pymysql==1.1.0
+psycopg2-binary==2.9.9
 
 # HTTP Requests
 aiohttp==3.9.1
@@ -14,11 +14,8 @@ requests==2.31.0
 # Google Cloud Vision API for High-Accuracy OCR
 google-cloud-vision==3.4.5
 
-# Image Processing & OCR (fallback system)
-opencv-python==4.8.1.78
+# Image Processing for Google Vision API
 pillow==10.1.0
-pytesseract==0.3.10
-numpy==1.26.2
 
 # Utilities
 python-dateutil==2.8.2
