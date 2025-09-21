@@ -149,6 +149,9 @@ class PIDKEYService:
                     elif response.status == 400:
                         return False, "Installation ID غير صالح أو غير مدعوم", None
                     
+                    elif response.status == 403:
+                        return False, "🚫 الكود محجوب أو غير مدعوم.\n\n📞 للمساعدة استخدم /contact", None
+                    
                     elif response.status == 401:
                         return False, "خطأ في المصادقة مع API", None
                     
