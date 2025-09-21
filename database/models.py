@@ -49,7 +49,7 @@ class Transaction(Base):
     __tablename__ = 'transactions'
     
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     type = Column(String(50), nullable=False)  # 'usdt_deposit', 'voucher_redeem', 'cid_purchase', 'admin_adjust'
     amount_usd = Column(Float, default=0.0)
     amount_cid = Column(Integer, default=0)
@@ -96,7 +96,7 @@ class VoucherUse(Base):
     
     id = Column(Integer, primary_key=True)
     voucher_id = Column(Integer, ForeignKey('vouchers.id'), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     used_at = Column(DateTime, default=datetime.utcnow)
     
     # Relationships
@@ -108,7 +108,7 @@ class CIDRequest(Base):
     __tablename__ = 'cid_requests'
     
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     installation_id = Column(Text, nullable=False)
     confirmation_id = Column(Text, nullable=True)
     status = Column(String(50), default='processing')  # 'processing', 'completed', 'failed', 'invalid_iid'
@@ -136,7 +136,7 @@ class PackageReservation(Base):
     __tablename__ = 'package_reservations'
     
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     package_id = Column(Integer, nullable=False)
     required_amount = Column(Float, nullable=False)  # Amount needed to pay
     status = Column(String(50), default='active')  # 'active', 'completed', 'expired', 'cancelled'
